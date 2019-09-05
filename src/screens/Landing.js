@@ -20,7 +20,7 @@ const Landing = () => {
 storeData = async (data) => {
   try {
     console.log([...data])
-    await AsyncStorage.setItem('todos', ...data)
+    await AsyncStorage.setItem('todos', JSON.stringify(data))
   } catch (e) {
     console.log(e)
   }
@@ -31,8 +31,9 @@ getData = async () => {
     console.log("getData running")
     const value = await AsyncStorage.getItem('todos')
     if(value !== null) {
-     return  console.log(value)
-     addTodos([...value])
+     return  console.log(value),
+          addTodos(JSON.parse(value))
+     
     } else console.log("data is null")
   } catch(e) {
     console.log(e)
@@ -48,6 +49,10 @@ useEffect(() => {
   }
 },[])
 
+useEffect(() => {
+  storeData(todos);
+}, [todos])
+
   const mappedTodos = todos.map((todo, i) => {
     return (
       !showOptions ? <TouchableOpacity key={i} style={{width: '90%', height: 80, backgroundColor: "blue"}} onPress={()=> showOptions(true)}>
@@ -59,11 +64,11 @@ useEffect(() => {
   });
 
   addTodo = todo => {
-    console.log(todo)
+
     addTodos([...todos, todo]);
     setTextValue('');
-    storeData(todos);
     console.log(todos)
+    
   };
 
   return (
@@ -81,7 +86,7 @@ useEffect(() => {
             <View style={{justifyContent: 'flex-end'}}>
           <TouchableOpacity
             style={{backgroundColor: '#000', justifyContent:'center', width: 60, height: 50}}
-            onPress={() => addTodo(textValue)}>
+            onPress={()=>addTodo(textValue)}>
             <Text style={{color: '#fff', alignSelf: 'center', textAlign:'center'}}>Add{"\n"} Todo</Text>
           </TouchableOpacity>
           </View>
