@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -9,22 +9,61 @@ import {
 } from 'react-native';
 import {background, titleText} from '../common/colors';
 import NumericInput from 'react-native-numeric-input';
+import AsyncStorage from '@react-native-community/async-storage';
+
 
 const Landing = () => {
   const [textValue, setTextValue] = useState('');
   const [todos, addTodos] = useState([]);
+  const [options, showOptions] = useState(false)
 
-  const mappedTodos = todos.map(todo => {
+storeData = async (data) => {
+  try {
+    console.log([...data])
+    await AsyncStorage.setItem('todos', ...data)
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+getData = async () => {
+  try {
+    console.log("getData running")
+    const value = await AsyncStorage.getItem('todos')
+    if(value !== null) {
+     return  console.log(value)
+     addTodos([...value])
+    } else console.log("data is null")
+  } catch(e) {
+    console.log(e)
+  }
+}
+
+useEffect(() => {
+  console.log('component mounting')
+  getData()
+  return () => {
+    console.log("component unmounting")
+    storeData(todos)
+  }
+},[])
+
+  const mappedTodos = todos.map((todo, i) => {
     return (
-      <TouchableOpacity style={{width: '90%', height: 80, backgroundColor: "blue"}}>
-        <Text style={{color: "#fff"}}>{todo}</Text>
+      !showOptions ? <TouchableOpacity key={i} style={{width: '90%', height: 80, backgroundColor: "blue"}} onPress={()=> showOptions(true)}>
+        <Text style={{fontSize: 30}}>{todo}</Text>
+      </TouchableOpacity> : <TouchableOpacity style={{width: '90%', height: 80, backgroundColor: "blue"}} onPress={()=> showOptions(true)}>
+        <Text style={{fontSize: 30}}>{todo}</Text>
       </TouchableOpacity>
     );
   });
 
   addTodo = todo => {
+    console.log(todo)
     addTodos([...todos, todo]);
     setTextValue('');
+    storeData(todos);
+    console.log(todos)
   };
 
   return (
@@ -75,6 +114,8 @@ const styles = StyleSheet.create({
   text: {
     alignSelf: 'center',
     fontSize: 20,
+    borderColor: 'black',
+    borderWidth: 1,
   },
   textInput: {
     justifyContent:'center',
