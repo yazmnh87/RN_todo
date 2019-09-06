@@ -6,10 +6,13 @@ import {
   SafeAreaView,
   TextInput,
   TouchableOpacity,
+  ScrollView
 } from 'react-native';
+import { Icon } from 'native-base'
 import {background, titleText} from '../common/colors';
 import NumericInput from 'react-native-numeric-input';
 import AsyncStorage from '@react-native-community/async-storage';
+import { guidGenerator } from '../utils/guid'
 
 
 const Landing = () => {
@@ -40,6 +43,11 @@ getData = async () => {
   }
 }
 
+deleteTodo = (id) => {
+  console.log("delete running")
+  return todos.filter(todo =>  todo !== id)
+}
+
 useEffect(() => {
   console.log('component mounting')
   getData()
@@ -55,16 +63,19 @@ useEffect(() => {
 
   const mappedTodos = todos.map((todo, i) => {
     return (
-      !showOptions ? <TouchableOpacity key={i} style={{width: '90%', height: 80, backgroundColor: "blue"}} onPress={()=> showOptions(true)}>
-        <Text style={{fontSize: 30}}>{todo}</Text>
-      </TouchableOpacity> : <TouchableOpacity style={{width: '90%', height: 80, backgroundColor: "blue"}} onPress={()=> showOptions(true)}>
-        <Text style={{fontSize: 30}}>{todo}</Text>
+      !showOptions ? <TouchableOpacity key={todo.id} style={{width: '90%', height: 80, backgroundColor: "blue"}} onPress={()=> showOptions(true)}>
+        <Text style={{fontSize: 30}}>{todo.title}</Text><Icon name="close-circle-outline" onPress={()=> deleteTodo(todo.id)}/>
+      </TouchableOpacity> : <TouchableOpacity key={todo.id} style={{width: '90%', height: 80, backgroundColor: "blue", justifyContent: 'space-between'}} onPress={()=> showOptions(true)}>
+        <Text style={{fontSize: 30}}>{todo.title}</Text><Icon name="close-circle-outline" onPress={()=> deleteTodo(todo.id)}/>
       </TouchableOpacity>
     );
   });
 
-  addTodo = todo => {
-
+  addTodo = todoText => {
+    const todo = {
+      title: todoText,
+      id: guidGenerator()
+    }
     addTodos([...todos, todo]);
     setTextValue('');
     console.log(todos)
