@@ -7,19 +7,23 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
-  Keyboard
+  Keyboard,
+  Alert
 } from 'react-native';
 import {Icon} from 'native-base';
 import SwitchToggle from 'react-native-switch-toggle';
 import {background, titleText} from '../common/colors';
 import AsyncStorage from '@react-native-community/async-storage';
 import {guidGenerator} from '../utils/guid';
+import appConfig from '../../app.json'
+import PushNotificationAndroid from '../common/PushNotificationAndroid'
 
 const Landing = () => {
   const [textValue, setTextValue] = useState('');
   const [todos, addTodos] = useState([]);
   const [options, showOptions] = useState(false);
   const [switchOn, setSwitchOn] = useState(false);
+  const [senderID, setSenderID] = useState(appConfig.senderID)
 
   storeData = async data => {
     try {
@@ -44,6 +48,12 @@ const Landing = () => {
 
   turnNotificationOn = () => {
     setSwitchOn(!switchOn);
+    this.PushNotificationAndroid.localNotif(todos.forEach(element => {
+      return element
+    }))
+    if(switchOn === false){
+      this.PushNotificationAndroid.cancelNotif()
+    }
   };
 
   deleteTodo = id => {
@@ -54,6 +64,7 @@ const Landing = () => {
 
   useEffect(() => {
     console.log('component mounting');
+    this.PushNotificationAndroid = new PushNotificationAndroid(this.onNotif)
     getData();
     Keyboard.addListener(
       'keyboardDidShow')
@@ -108,6 +119,11 @@ const Landing = () => {
     setTextValue('');
     Keyboard.dismiss()
     console.log(todos);
+  };
+
+  onNotif = notif => {
+    console.log(notif);
+    Alert.alert(notif.title, notif.message);
   };
 
   return (
