@@ -8,7 +8,8 @@ import {
   TouchableOpacity,
   ScrollView,
   Keyboard,
-  Alert
+  Alert,
+  DeviceEventEmitter
 } from 'react-native';
 import {Icon} from 'native-base';
 import SwitchToggle from 'react-native-switch-toggle';
@@ -48,9 +49,7 @@ const Landing = () => {
 
   turnNotificationOn = () => {
     setSwitchOn(!switchOn);
-    this.PushNotificationAndroid.localNotif(todos.forEach(element => {
-      return element
-    }))
+    this.PushNotificationAndroid.localNotif()
     if(switchOn === false){
       this.PushNotificationAndroid.cancelNotif()
     }
@@ -65,6 +64,7 @@ const Landing = () => {
   useEffect(() => {
     console.log('component mounting');
     this.PushNotificationAndroid = new PushNotificationAndroid(this.onNotif)
+    this.PushNotificationAndroid.notifActions()
     getData();
     Keyboard.addListener(
       'keyboardDidShow')

@@ -1,6 +1,8 @@
 import PushNotification from 'react-native-push-notification';
+import {DeviceEventEmitter} from 'react-native'
 
  class PushNotificationAndroid {
+   
 
   constructor(onRegister, onNotification) {
     this.configure(onRegister, onNotification);
@@ -30,7 +32,7 @@ import PushNotification from 'react-native-push-notification';
     });
   }
 
-  localNotif(todos) {
+  localNotif() {
     this.lastId++;
 
     let config = {
@@ -56,13 +58,13 @@ import PushNotification from 'react-native-push-notification';
   
         /* iOS and Android properties */
         title: "Todos", // (optional)
-        message: todos, // (required)
+        message: "todos", // (required)
         playSound: false, // (optional) default: true
         soundName: 'default', // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: 'default' (default sound is played)
         number: '10', // (optional) Valid 32 bit integer specified as string. default: none (Cannot be zero)
         actions: '["Add Todo", "View"]',  // (Android only) See the doc for notification actions to know more
       }
-
+      console.log(PushNotification)
     PushNotification.localNotification(config);
   }
 
@@ -109,6 +111,23 @@ import PushNotification from 'react-native-push-notification';
   cancelAll() {
     PushNotification.cancelAllLocalNotifications();
   }
+
+  notifActions(){
+    console.log("action function running")
+    PushNotification.registerNotificationActions(['Add Todo','View']);
+    // console.log(PushNotification.registerNotificationActions())
+    DeviceEventEmitter.addListener('notificationActionReceived', function(action){
+      console.log ('Notification action received: ' + action);
+      const info = JSON.parse(action.dataJSON);
+      if (info.action == 'Add Todo') {
+        return console.log("add todo")
+      } else if (info.action == 'View') {
+        return console.log("view")
+      }
+      // Add all the required actions handlers
+    });
+    }
+
 }
 
 export default PushNotificationAndroid
