@@ -64,8 +64,8 @@ import {DeviceEventEmitter} from 'react-native'
         number: '10', // (optional) Valid 32 bit integer specified as string. default: none (Cannot be zero)
         actions: '["Add Todo", "View"]',  // (Android only) See the doc for notification actions to know more
       }
-      console.log(PushNotification)
     PushNotification.localNotification(config);
+    PushNotification.registerNotificationActions(['Add Todo','View'])
   }
 
   scheduleNotif() {
@@ -112,21 +112,7 @@ import {DeviceEventEmitter} from 'react-native'
     PushNotification.cancelAllLocalNotifications();
   }
 
-  notifActions(){
-    console.log("action function running")
-    PushNotification.registerNotificationActions(['Add Todo','View']);
-    // console.log(PushNotification.registerNotificationActions())
-    DeviceEventEmitter.addListener('notificationActionReceived', function(action){
-      console.log ('Notification action received: ' + action);
-      const info = JSON.parse(action.dataJSON);
-      if (info.action == 'Add Todo') {
-        return console.log("add todo")
-      } else if (info.action == 'View') {
-        return console.log("view")
-      }
-      // Add all the required actions handlers
-    });
-    }
+  
 
 }
 

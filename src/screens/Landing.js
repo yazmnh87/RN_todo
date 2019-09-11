@@ -28,7 +28,6 @@ const Landing = () => {
 
   storeData = async data => {
     try {
-      console.log([...data]);
       await AsyncStorage.setItem('todos', JSON.stringify(data));
     } catch (e) {
       console.log(e);
@@ -37,10 +36,9 @@ const Landing = () => {
 
   getData = async () => {
     try {
-      console.log('getData running');
       const value = await AsyncStorage.getItem('todos');
       if (value !== null) {
-        return console.log(value), addTodos(JSON.parse(value));
+        return addTodos(JSON.parse(value));
       } else console.log('data is null');
     } catch (e) {
       console.log(e);
@@ -56,15 +54,13 @@ const Landing = () => {
   };
 
   deleteTodo = id => {
-    console.log('delete running');
-    console.log(id);
     return addTodos(todos.filter(todo => todo.id !== id));
   };
 
   useEffect(() => {
     console.log('component mounting');
     this.PushNotificationAndroid = new PushNotificationAndroid(this.onNotif)
-    this.PushNotificationAndroid.notifActions()
+     
     getData();
     Keyboard.addListener(
       'keyboardDidShow')
@@ -74,9 +70,10 @@ const Landing = () => {
       console.log('component unmounting');
       storeData(todos);
       Keyboard.removeListener(
-        'keyboardDidShow')
+        'keyboardDidShow',  ()=> console.log("keyboarddidhow removed"))
         Keyboard.removeListener(
-          'keyboardDidHide')
+          'keyboardDidHide', ()=> console.log("keyboarddidhide removed"))
+        
     };
   }, []);
 
@@ -118,7 +115,6 @@ const Landing = () => {
     addTodos([...todos, todo]);
     setTextValue('');
     Keyboard.dismiss()
-    console.log(todos);
   };
 
   onNotif = notif => {
