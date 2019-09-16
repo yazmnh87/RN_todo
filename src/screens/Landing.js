@@ -66,6 +66,16 @@ const Landing = () => {
       'keyboardDidShow')
       Keyboard.addListener(
         'keyboardDidHide')
+        DeviceEventEmitter.addListener('notificationActionReceived', function(action){
+          console.log ('Notification action received: ' + action);
+          const info = JSON.parse(action.dataJSON);
+          if (info.action == 'Add Todo') {
+            return console.log("add todo")
+          } else if (info.action == 'View') {
+            return console.log("view")
+          }
+          // Add all the required actions handlers
+        });
     return () => {
       console.log('component unmounting');
       storeData(todos);
@@ -73,7 +83,7 @@ const Landing = () => {
         'keyboardDidShow',  ()=> console.log("keyboarddidhow removed"))
         Keyboard.removeListener(
           'keyboardDidHide', ()=> console.log("keyboarddidhide removed"))
-        
+          DeviceEventEmitter.removeListener('notificationActionReceived', ()=> console.log("notificationActionListenerRemoved"))
     };
   }, []);
 
