@@ -11,7 +11,7 @@
     "@react-native-community/async-storage": "^1.6.1",
     "native-base": "^2.13.5",
     "react": "16.8.6",
-    "react-native": "0.60.5",
+    "react-native": "0.62.3",
     "react-native-numeric-input": "^1.8.3",
     "react-native-push-notification": "^3.1.9",
     "react-native-switch-toggle": "^1.1.0",
